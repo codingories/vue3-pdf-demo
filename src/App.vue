@@ -1,12 +1,11 @@
 <template>
-  <div @click="changePdf" class="divStyle">click</div>
-  <div @click="changePdf" class="paint">click</div>
   <div class="pdfStyle" ref="pdfStyle">
     <vue-pdf-embed :source="source1"
                    @loaded="pdfLoaded"
                    :disableAnnotationLayer="true"
                    @rendered="rendered"
                    ref="myPdfRef"
+                   :page="1"
     />
   </div>
 </template>
@@ -14,7 +13,7 @@
 <script setup lang="ts">
 import VuePdfEmbed from 'vue-pdf-embed'
 import { ref } from 'vue';
-let source1 = ref<string>('./test.pdf')
+let source1 = ref<string>('https://arkokoley.github.io/pdfvuer/nationStates.pdf')
 const myPdfRef = ref<HTMLElement | null>(null)
 const pdfStyle = ref<HTMLElement | null>(null)
 
@@ -24,11 +23,7 @@ const context = ref(null)
 const isDrawing = ref<boolean>(false)
 
 
-const changePdf = () => {
-  source1.value = 'https://arkokoley.github.io/pdfvuer/nationStates.pdf'
-}
 const pdfLoaded = (pdf) => {
-  // pdf 已经加载完成
   console.log('pdf', pdf)
 }
 
@@ -57,27 +52,20 @@ const startDrawing = (event) => {
 }
 
 const draw = (event) => {
-  console.log('draw', event)
+  if (!isDrawing.value) return
+  context.value.lineTo(event.clientX, event.clientY)
+  context.value.stroke()
 }
 
 
 const mouseup = () => {
-  console.log('mouseup')
+  isDrawing.value = false
 }
 
 
 const mouseout = () => {
-  console.log('mouseout')
+  // context.value.clearRect(0, 0, 2000, 2000)
 }
-
-
-// const pdfPageChanged = (page) => {
-//   // pdf 的页面已经改变
-//   console.log('page', page)
-// }
-
-
-
 </script>
 
 
